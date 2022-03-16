@@ -10,5 +10,6 @@ python main.py
 You will have to turn off your anti-virus or exclude the folder where the file is
 </p>
 <p align="center">
-<b>Please do not use this for malicious use! <img src="views/icon1.png"/></b>
+<b>Please do not use this for malicious use!</b>
+<img src="views/icon1.png"/>
 </p>
