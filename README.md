@@ -9,6 +9,6 @@ python main.py
 <p align="center">
 You will have to turn off your anti-virus or exclude the folder where the file is
 </p>
-<p>
-<b align="center">Please do not use this for malicious use!</b>
+<p align="center">
+<b>Please do not use this for malicious use!</b>
 </p>
