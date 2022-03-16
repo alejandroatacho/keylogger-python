@@ -11,5 +11,5 @@ You will have to turn off your anti-virus or exclude the folder where the file i
 </p>
 <p align="center">
 <b>Please do not use this for malicious use!</b>
-<img src="views/icon1.png"/>
 </p>
+<p align="center"><img src="views/icon1.png"/><p>
