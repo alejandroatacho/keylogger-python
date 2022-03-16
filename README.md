@@ -4,12 +4,12 @@
 </p>
 <p align="center">
 To use it type in terminal/Powershell:
-python main.py
+```python main.py```
 (press Escape/ESC on your keyboard to turn it off)</p>
 <p align="center">
-You will have to turn off your anti-virus or exclude the folder where the file is
+You will have to turn off your anti-virus or exclude the folder where the file is.
 </p>
 <p align="center">
-<b>Please do not use this for malicious use!</b>
+<b>Please do not use this for malicious intentions!</b>
 </p>
 <p align="center"><img src="views/icon1.png"/><p>
