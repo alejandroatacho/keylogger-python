@@ -3,7 +3,7 @@
 <img src="views/herobanner.jpg" alt="hero-banner" width=auto height=300/>
 </p>
 <p align="center">
-**_NOTE:_**  To use it type in terminal/Powershell:
+> **_NOTE:_**  To use it type in terminal/Powershell:
 ```python main.py```
 (press Escape/ESC on your keyboard to turn it off)</p>
 <p align="center">
